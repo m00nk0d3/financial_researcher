@@ -42,7 +42,20 @@ This will start the web server at `http://127.0.0.1:5000`. Open this URL in your
 2. Watch real-time progress as AI agents research the company
 3. View the final report rendered as HTML
 
-The web interface provides a user-friendly way to run research jobs and view results without using the command line.
+#### Enhanced Agent Dashboard
+
+The web interface now features an **enhanced agent activity dashboard** that showcases the agentic workflow in action:
+
+- **Agent Cards**: Visual representation of the Researcher and Analyst agents with real-time status updates
+- **Task Timeline**: Progress visualization showing the research and analysis tasks
+- **Tool Usage**: See which tools (like SerperDevTool) are being used by each agent
+- **Categorized Logs**: Color-coded activity logs with icons for different event types:
+  - 🔧 Tool usage
+  - 💭 Agent thinking/reasoning
+  - 👤 Agent transitions
+  - 📋 Task starts/completions
+
+The interface updates in real-time, giving you full visibility into how the AI agents collaborate to research and analyze companies.
 
 ### Command Line Interface
 
