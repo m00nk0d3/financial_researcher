@@ -61,7 +61,7 @@ def stream_job(job_id: str):
     
     def generate():
         """Generate SSE events for job progress."""
-        last_log_count = 0
+        last_event_index = 0
         
         while True:
             job = job_manager.get_job(job_id)
@@ -69,11 +69,14 @@ def stream_job(job_id: str):
                 yield f"event: error\ndata: Job not found\n\n"
                 break
             
-            # Send new logs
-            logs = job.logs[last_log_count:]
-            for log in logs:
-                yield f"event: log\ndata: {log}\n\n"
-            last_log_count = len(job.logs)
+            # Send new structured events
+            new_events = job_manager.get_events(job_id, since_index=last_event_index)
+            for event in new_events:
+                import json
+                event_type = event.get('type', 'log')
+                event_data = json.dumps(event.get('data', {}))
+                yield f"event: {event_type}\ndata: {event_data}\n\n"
+            last_event_index = len(job.events)
             
             # Send status updates
             yield f"event: status\ndata: {job.state.value}\n\n"
