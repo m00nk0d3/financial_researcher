@@ -17,6 +17,7 @@ train = "financial_researcher.main:train"
 replay = "financial_researcher.main:replay"
 test = "financial_researcher.main:test"
 run_with_trigger = "financial_researcher.main:run_with_trigger"
+web = "financial_researcher.web_app:run_web_app"
 
 [build-system]
 requires = ["hatchling"]
