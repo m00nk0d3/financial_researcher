@@ -6,21 +6,31 @@ from typing import Optional
 
 from financial_researcher.crew import FinancialResearcher
 from financial_researcher.job_manager import JobManager, JobState
+from financial_researcher.log_parser import LogParser
 
 
 class CrewOutputCapture:
-    """Captures stdout/stderr and forwards to job manager."""
+    """Captures stdout/stderr and forwards to job manager with parsing."""
     
     def __init__(self, job_manager: JobManager, job_id: str):
         self.job_manager = job_manager
         self.job_id = job_id
         self.buffer = io.StringIO()
+        self.parser = LogParser()
     
     def write(self, text: str):
-        """Write to buffer and forward to job manager."""
+        """Write to buffer, parse, and forward to job manager."""
         if text and text.strip():
             self.buffer.write(text)
+            
+            # Add raw log
             self.job_manager.add_log(self.job_id, text.strip())
+            
+            # Parse and extract structured events
+            events = self.parser.parse_line(text.strip())
+            for event in events:
+                self.job_manager.add_event(self.job_id, event)
+        
         return len(text)
     
     def flush(self):
