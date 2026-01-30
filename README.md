@@ -29,7 +29,24 @@ crewai install
 
 ## Running the Project
 
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
+### Web Interface (Recommended)
+
+The easiest way to use the Financial Researcher is through the web interface:
+
+```bash
+$ uv run web
+```
+
+This will start the web server at `http://127.0.0.1:5000`. Open this URL in your browser to:
+1. Enter a company name in the form
+2. Watch real-time progress as AI agents research the company
+3. View the final report rendered as HTML
+
+The web interface provides a user-friendly way to run research jobs and view results without using the command line.
+
+### Command Line Interface
+
+To run research from the command line, use:
 
 ```bash
 $ crewai run

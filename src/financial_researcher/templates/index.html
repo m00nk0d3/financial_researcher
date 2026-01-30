@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Researcher - AI-Powered Company Research</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            display: block;
+        }
+
+        .form-section.hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-section {
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status-badge.running {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .logs-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .report-content {
+            line-height: 1.8;
+        }
+
+        .report-content h1,
+        .report-content h2,
+        .report-content h3 {
+            color: #333;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .report-content h1 {
+            font-size: 2em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .report-content h2 {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .report-content h3 {
+            font-size: 1.2em;
+        }
+
+        .report-content p {
+            margin-bottom: 12px;
+        }
+
+        .report-content ul,
+        .report-content ol {
+            margin-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        .report-content li {
+            margin-bottom: 6px;
+        }
+
+        .report-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .report-content th,
+        .report-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .report-content th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .report-content code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #dc2626;
+            margin-top: 15px;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Financial Researcher</h1>
+            <p>AI-Powered Company Research & Analysis</p>
+        </header>
+
+        <!-- Form Section -->
+        <div class="card form-section" id="formSection">
+            <h2>Start New Research</h2>
+            <form id="researchForm">
+                <div class="form-group">
+                    <label for="companyInput">Company Name</label>
+                    <input 
+                        type="text" 
+                        id="companyInput" 
+                        name="company" 
+                        placeholder="Enter company name (e.g., Apple, Microsoft, Tesla)"
+                        required
+                        maxlength="100"
+                    >
+                </div>
+                <button type="submit" id="submitBtn">Start Research</button>
+            </form>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="card progress-section" id="progressSection">
+            <h2>Research in Progress</h2>
+            <div id="statusContainer">
+                <span class="status-badge running">
+                    <span class="spinner"></span>
+                    <span id="statusText">Running</span>
+                </span>
+            </div>
+            <div class="logs-container" id="logsContainer">
+                <div class="log-entry">Initializing...</div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card results-section" id="resultsSection">
+            <h2>Research Report: <span id="reportCompany"></span></h2>
+            <div class="report-content" id="reportContent"></div>
+            <div class="action-buttons">
+                <button onclick="resetForm()" class="btn-secondary">Research Another Company</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let eventSource = null;
+
+        // Form submission handler
+        document.getElementById('researchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const companyInput = document.getElementById('companyInput');
+            const company = companyInput.value.trim();
+            
+            if (!company) {
+                alert('Please enter a company name');
+                return;
+            }
+
+            // Disable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Starting...';
+
+            try {
+                // Start research
+                const response = await fetch('/research', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ company })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to start research');
+                }
+
+                const data = await response.json();
+                
+                // Hide form, show progress
+                document.getElementById('formSection').classList.add('hidden');
+                document.getElementById('progressSection').classList.add('active');
+                
+                // Clear logs
+                document.getElementById('logsContainer').innerHTML = '';
+                
+                // Connect to SSE
+                connectSSE(data.job_id);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Start Research';
+            }
+        });
+
+        // Connect to Server-Sent Events
+        function connectSSE(jobId) {
+            eventSource = new EventSource(`/stream/${jobId}`);
+            
+            eventSource.addEventListener('log', (e) => {
+                addLog(e.data);
+            });
+            
+            eventSource.addEventListener('status', (e) => {
+                updateStatus(e.data);
+            });
+            
+            eventSource.addEventListener('complete', async (e) => {
+                eventSource.close();
+                await loadReport(jobId);
+            });
+            
+            eventSource.addEventListener('error', (e) => {
+                eventSource.close();
+                showError(e.data || 'An error occurred during research');
+            });
+
+            eventSource.onerror = (error) => {
+                console.error('SSE Error:', error);
+                eventSource.close();
+                showError('Connection lost. Please try again.');
+            };
+        }
+
+        // Add log entry
+        function addLog(message) {
+            const logsContainer = document.getElementById('logsContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = message;
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        // Update status badge
+        function updateStatus(status) {
+            const statusBadge = document.querySelector('.status-badge');
+            const statusText = document.getElementById('statusText');
+            
+            statusBadge.className = 'status-badge ' + status;
+            statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        // Load and display report
+        async function loadReport(jobId) {
+            try {
+                const response = await fetch(`/report/${jobId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load report');
+                }
+
+                const data = await response.json();
+                
+                // Hide progress, show results
+                document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('resultsSection').classList.add('active');
+                
+                // Display report
+                document.getElementById('reportCompany').textContent = data.company;
+                document.getElementById('reportContent').innerHTML = data.html;
+
+            } catch (error) {
+                showError('Error loading report: ' + error.message);
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const progressSection = document.getElementById('progressSection');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            
+            progressSection.appendChild(errorDiv);
+            
+            // Add reset button
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = 'Try Again';
+            resetBtn.className = 'btn-secondary';
+            resetBtn.style.marginTop = '15px';
+            resetBtn.onclick = resetForm;
+            progressSection.appendChild(resetBtn);
+        }
+
+        // Reset form to initial state
+        function resetForm() {
+            // Close any active SSE connections
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+
+            // Reset form
+            document.getElementById('companyInput').value = '';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = 'Start Research';
+
+            // Hide all sections except form
+            document.getElementById('formSection').classList.remove('hidden');
+            document.getElementById('progressSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.remove('active');
+
+            // Clear logs and errors
+            document.getElementById('logsContainer').innerHTML = '<div class="log-entry">Initializing...</div>';
+            
+            // Remove any error messages
+            const errors = document.querySelectorAll('.error-message');
+            errors.forEach(err => err.remove());
+        }
+    </script>
+</body>
+</html>
