@@ -108,6 +108,32 @@ class JobManager:
                 return []
             return job.logs.copy()
     
+    def add_event(self, job_id: str, event: Dict) -> bool:
+        """Add a structured event to the job."""
+        with self._lock:
+            job = self._jobs.get(job_id)
+            if not job:
+                return False
+            
+            job.events.append(event)
+            job.updated_at = datetime.now()
+            
+            # Update current agent/task if event contains that info
+            if event.get('type') in ['agent_start', 'agent_change']:
+                job.current_agent = event.get('data', {}).get('agent')
+            elif event.get('type') == 'task_start':
+                job.current_task = event.get('data', {}).get('task')
+            
+            return True
+    
+    def get_events(self, job_id: str, since_index: int = 0) -> List[Dict]:
+        """Get events for a job, optionally starting from a specific index."""
+        with self._lock:
+            job = self._jobs.get(job_id)
+            if not job:
+                return []
+            return job.events[since_index:]
+    
     def cleanup_old_jobs(self, max_age_hours: int = 24) -> int:
         """Remove jobs older than max_age_hours. Returns count of removed jobs."""
         now = datetime.now()
