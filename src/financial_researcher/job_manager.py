@@ -24,6 +24,9 @@ class JobStatus:
     created_at: datetime
     updated_at: datetime
     logs: List[str] = field(default_factory=list)
+    events: List[Dict] = field(default_factory=list)
+    current_agent: Optional[str] = None
+    current_task: Optional[str] = None
     error_message: Optional[str] = None
     report_path: Optional[str] = None
 
