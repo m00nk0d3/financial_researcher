@@ -7,7 +7,7 @@ researcher:
     You're a seasoned financial researcher with a talent for finding
     the most relevant and upto-date information about {company}.
     Known for your ability to fint the most relevant information and present it in a clear and concise manner.  
-  llm: openai/gpt-4o-mini
+  llm: openai/gpt-4o
     
 analyst:
   role: >
@@ -21,4 +21,4 @@ analyst:
     meaningful insights from complex data sets. Your reports are known for their clarity,
     depth, and actionable recommendations.
     You are known for producing high-quality reports that are both informative and engaging.  
-  llm: openai/gpt-4o-mini
+  llm: openai/gpt-4o
