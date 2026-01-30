@@ -158,6 +158,37 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Progress Bar */
+        .progress-bar-container {
+            margin: 20px 0 30px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #555;
+            font-size: 1.1em;
+        }
+
         /* Agent Cards */
         .agents-container {
             display: grid;
@@ -498,6 +529,14 @@
         <div class="card progress-section" id="progressSection">
             <h2>Research in Progress</h2>
             
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">0% Complete</div>
+            </div>
+            
             <!-- Agent Activity Cards -->
             <div class="agents-container">
                 <div class="agent-card" id="researcherCard">
@@ -607,6 +646,9 @@
                 document.getElementById('formSection').classList.add('hidden');
                 document.getElementById('progressSection').classList.add('active');
                 
+                // Initialize progress bar
+                updateProgressBar(10);
+                
                 // Clear logs
                 document.getElementById('logsContainer').innerHTML = '';
                 
@@ -629,12 +671,22 @@
                 const data = JSON.parse(e.data);
                 updateAgentStatus(data);
                 addLog(`Agent started: ${data.agent}`, 'agent-change');
+                
+                // Update progress when first agent starts
+                if (data.role === 'researcher') {
+                    updateProgressBar(15);
+                }
             });
 
             eventSource.addEventListener('agent_change', (e) => {
                 const data = JSON.parse(e.data);
                 updateAgentStatus(data);
                 addLog(`Agent changed to: ${data.agent}`, 'agent-change');
+                
+                // Update progress when analyst starts
+                if (data.role === 'analyst') {
+                    updateProgressBar(55);
+                }
             });
 
             eventSource.addEventListener('task_start', (e) => {
@@ -653,6 +705,14 @@
                 const data = JSON.parse(e.data);
                 updateAgentActivity(data);
                 addLog(`Using tool: ${data.tool}`, 'tool-use');
+                
+                // Increment progress slightly during active work
+                const currentProgress = parseInt(document.getElementById('progressBarFill').style.width);
+                if (currentProgress < 50) {
+                    updateProgressBar(Math.min(currentProgress + 5, 45));
+                } else if (currentProgress < 95) {
+                    updateProgressBar(Math.min(currentProgress + 5, 90));
+                }
             });
 
             eventSource.addEventListener('thinking', (e) => {
@@ -734,6 +794,7 @@
                 item.classList.add('active');
                 item.querySelector('.timeline-status').textContent = 'In Progress';
                 document.querySelector('.timeline-connector').classList.add('active');
+                updateProgressBar(25); // Starting research
             } else if (taskName.includes('analysis')) {
                 // Complete research task
                 const researchItem = document.getElementById('taskResearch');
@@ -746,6 +807,7 @@
                 analysisItem.classList.add('active');
                 analysisItem.querySelector('.timeline-status').textContent = 'In Progress';
                 document.querySelector('.timeline-connector').classList.add('completed');
+                updateProgressBar(60); // Starting analysis
             }
         }
 
@@ -753,7 +815,9 @@
         function completeTask(data) {
             const taskName = data.task.toLowerCase();
             
-            if (taskName.includes('analysis')) {
+            if (taskName.includes('research')) {
+                updateProgressBar(50); // Research complete
+            } else if (taskName.includes('analysis')) {
                 const item = document.getElementById('taskAnalysis');
                 item.classList.remove('active');
                 item.classList.add('completed');
@@ -762,7 +826,17 @@
                 // Mark analyst as completed
                 document.getElementById('analystCard').classList.add('completed');
                 document.getElementById('analystStatus').textContent = '✅';
+                updateProgressBar(100); // Analysis complete
             }
+        }
+
+        // Update progress bar
+        function updateProgressBar(percentage) {
+            const fill = document.getElementById('progressBarFill');
+            const text = document.getElementById('progressText');
+            
+            fill.style.width = percentage + '%';
+            text.textContent = percentage + '% Complete';
         }
 
         // Add log entry
@@ -861,6 +935,9 @@
             document.querySelectorAll('.timeline-connector').forEach(conn => {
                 conn.classList.remove('active', 'completed');
             });
+
+            // Reset progress bar
+            updateProgressBar(0);
 
             // Clear logs and errors
             document.getElementById('logsContainer').innerHTML = '<div class="log-entry">Initializing...</div>';
